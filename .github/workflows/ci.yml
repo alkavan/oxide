@@ -100,9 +100,9 @@ jobs:
         working-directory: ${{ steps.strings.outputs.build-output-dir }}
         run: |
           if [ "${{ runner.os }}" == "Windows" ]; then
-            ./${{ matrix.build_type }}/examples.exe
+            ./${{ matrix.build_type }}/oxide_examples.exe
           else
-            ./examples
+            ./oxide_examples
           fi
         shell: bash
 

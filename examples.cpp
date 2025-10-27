@@ -19,11 +19,11 @@
  *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  *  DEALINGS IN THE SOFTWARE.
  */
+#include <oxide.hpp>
 
 #include <functional>
 #include <array>
 #include <iostream>
-#include <oxide.hpp>
 
 struct Quit {};  // Unit variant
 struct Move { int x, y; };  // Struct variant

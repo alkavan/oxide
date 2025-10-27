@@ -19,7 +19,7 @@
 # DEALINGS IN THE SOFTWARE.
 
 cmake_minimum_required(VERSION 3.21)
-project(oxide VERSION 1.0.0 LANGUAGES CXX)
+project(oxide VERSION 1.0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -37,8 +37,8 @@ target_compile_features(oxide INTERFACE cxx_std_23)
 set(INCLUDE_INSTALL_DIR include)
 
 # Create examples executable and link it to oxide
-add_executable(examples examples.cpp)
-target_link_libraries(examples oxide)
+add_executable(oxide_examples examples.cpp)
+target_link_libraries(oxide_examples oxide)
 
 install(TARGETS oxide
     EXPORT oxideTargets
@@ -55,6 +55,8 @@ install(EXPORT oxideTargets
     NAMESPACE oxide::
     DESTINATION lib/cmake/oxide
 )
+
+### EXPORT #####################################################################
 
 # Create a package config file
 include(CMakePackageConfigHelpers)
