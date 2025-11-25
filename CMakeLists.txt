@@ -19,7 +19,7 @@
 # DEALINGS IN THE SOFTWARE.
 
 cmake_minimum_required(VERSION 3.21)
-project(oxide VERSION 1.0.1 LANGUAGES CXX)
+project(oxide VERSION 1.0.2 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -27,28 +27,55 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(oxide INTERFACE)
 
 target_include_directories(oxide INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
 target_compile_features(oxide INTERFACE cxx_std_23)
 
+if(MSVC)
+    target_compile_options(oxide INTERFACE /EHsc)
+endif()
+
+target_compile_definitions(oxide INTERFACE
+        OXIDE_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
+        OXIDE_VERSION_MINOR=${PROJECT_VERSION_MINOR}
+        OXIDE_VERSION_PATCH=${PROJECT_VERSION_PATCH}
+        OXIDE_VERSION="${PROJECT_VERSION}"
+)
+
 # Define installation directory for headers
 set(INCLUDE_INSTALL_DIR include)
 
-# Create examples executable and link it to oxide
-add_executable(oxide_examples examples.cpp)
-target_link_libraries(oxide_examples oxide)
+# Match example
+add_executable(oxide_match_example examples/match.cpp)
+target_link_libraries(oxide_match_example oxide)
+
+# Functional example
+add_executable(oxide_functional_example examples/functional.cpp)
+target_link_libraries(oxide_functional_example oxide)
+
+# Covariant dispatch example
+add_executable(oxide_covariant_dispatch_example examples/covariant_dispatch.cpp)
+target_link_libraries(oxide_covariant_dispatch_example oxide)
+
+# Vector example
+add_executable(oxide_vector_example examples/vector.cpp)
+target_link_libraries(oxide_vector_example oxide)
+
+# Database example
+add_executable(oxide_database_example examples/database.cpp)
+target_link_libraries(oxide_database_example oxide)
 
 install(TARGETS oxide
-    EXPORT oxideTargets
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include
+        EXPORT oxideTargets
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION include
 )
 
-install(FILES oxide.hpp DESTINATION include)
+install(FILES include/oxide.hpp DESTINATION include)
 
 install(EXPORT oxideTargets
     FILE oxideTargets.cmake

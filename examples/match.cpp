@@ -40,9 +40,9 @@ Message write(std::string text) { return Message{Write{std::move(text)}}; }
 Message read(std::function<void()> callback) { return Message{Read{std::move(callback)}}; }
 
 // Example helper functions
-oxide::Option<std::pair<int, int>> get_coordinates(const Message& msg);
+static oxide::Option<std::pair<int, int>> get_coordinates(const Message& msg);
 
-// Usage example
+// Match usage example
 int main() {
     namespace ox = oxide;
 
@@ -80,7 +80,7 @@ int main() {
     };
 
     // Convert to vector for the find function
-    ox::Vec<Message> msg_vec(msgs_functional.begin(), msgs_functional.end());
+    const ox::Vec<Message> msg_vec(msgs_functional.begin(), msgs_functional.end());
 
     // Is 'Move' message predicate
     auto is_move_predicate = [](const Message& msg){
@@ -119,78 +119,6 @@ int main() {
 
     for (const auto& msg : msg_vec.iter()) {
         process_with_context(msg);
-    }
-
-    using ox::Result;
-
-    // Rust-like example with std::expected (built-in monadic ops: and_then, transform, etc.)
-    auto divide = [](const int a, const int b) -> Result<int> {
-        if (b == 0) return std::unexpected("Division by zero");
-        return a / b;
-    };
-
-    Result<int> ok_res = divide(84, 2);
-    Result<int> err_res = divide(84, 0);
-
-    // Built-in methods: has_value() like is_ok, value() like unwrap (throws if error), error(), value_or(default)
-    if (ok_res.has_value()) {
-        std::cout << "Ok: " << ok_res.value() << "\n";
-    } else {
-        std::cout << "Err: " << ok_res.error() << "\n";
-    }
-
-    // Monadic chaining (Rust-like map/and_then) - capture divide by reference
-    const auto chained = ok_res.and_then([&divide](const int val) -> Result<int> {
-        return divide(val, 3);  // Now divide is accessible via capture
-    }).transform([](const int val) { return val * 2; });  // Maps success value
-
-    if (chained.has_value()) {
-        std::cout << "Chained Ok: " << chained.value() << "\n";
-    }
-
-    // For err_res, similar handling or or_else for recovery
-    const auto recovered = err_res.or_else([](const std::string&) -> Result<int> {
-        return 0;  // Recover from error
-    });
-    std::cout << "Recovered: " << recovered.value_or(-1) << "\n";
-
-    // Vector
-    oxide::Vec<int> v{1, 2, 3};
-
-    // len()
-    std::cout << "Length: " << v.len() << "\n";
-
-    // pop()
-    if (auto popped = v.pop()) {
-        std::cout << "Popped: " << *popped << "\n";
-    }
-    std::cout << "New length: " << v.len() << "\n";
-
-    auto empty_pop = v.pop();
-    while (empty_pop) { empty_pop = v.pop(); }
-
-    if (auto none = v.pop(); !none) {
-        std::cout << "Empty pop: None\n";
-    }
-
-    // get()
-    v = {10, 20};
-
-    if (auto val = v.get(0)) {
-        std::cout << "Get[0]: " << val->get() << "\n";  // Outputs: Get[0]: 10 (val is Option<ref<int>>)
-        val->get() = 100;  // Mutable access (modifies v[0])
-    }
-
-    if (v.get(99)) {
-        // Won't reach here
-    } else {
-        std::cout << "Get[99]: None\n";
-    }
-
-    // Get contact reference
-    const oxide::Vec<int> cv{100, 200};
-    if (auto val = cv.get(0)) {
-        std::cout << "Const get[0]: " << val->get() << "\n";
     }
 
     return 0;
