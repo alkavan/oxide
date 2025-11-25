@@ -99,10 +99,21 @@ jobs:
       - name: Test
         working-directory: ${{ steps.strings.outputs.build-output-dir }}
         run: |
+          examples=(
+            oxide_match_example
+            oxide_functional_example
+            oxide_covariant_dispatch_example
+            oxide_vector_example
+            oxide_database_example
+          )
           if [ "${{ runner.os }}" == "Windows" ]; then
-            ./${{ matrix.build_type }}/oxide_examples.exe
+            for ex in "${examples[@]}"; do
+              ./${{ matrix.build_type }}/$ex.exe || exit 1
+            done
           else
-            ./oxide_examples
+            for ex in "${examples[@]}"; do
+              ./$ex || exit 1
+            done
           fi
         shell: bash
 
@@ -117,7 +128,7 @@ jobs:
       - name: Create Release and Upload oxide.hpp
         uses: softprops/action-gh-release@v2
         with:
-          files: oxide.hpp
+          files: include/oxide.hpp
           name: RELEASE ${{ github.ref_name }}
           draft: false
           prerelease: false

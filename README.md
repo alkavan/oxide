@@ -33,10 +33,10 @@ refer to the `examples.cpp` file or explorer the fully working examples below.
 * This resembles standard C++ operator overloading and is more intuitive.
 
 ```cpp
+#include <oxide.hpp>
 #include <functional>
 #include <array>
 #include <iostream>
-#include <oxide.hpp>
 
 struct Quit {};
 struct Move { int x, y; };
@@ -71,10 +71,10 @@ int main() {
 
 ### Functional Example
 ```cpp
+#include <oxide.hpp>
 #include <functional>
 #include <array>
 #include <iostream>
-#include <oxide.hpp>
 
 struct Quit {};
 struct Move { int x, y; };
@@ -135,10 +135,10 @@ oxide::Option<std::pair<int, int>> get_coordinates(const Message& msg) {
 (with optional settings affecting processing)
 
 ```cpp
+#include <oxide.hpp>
 #include <functional>
 #include <array>
 #include <iostream>
-#include <oxide.hpp>
 
 struct Quit {};
 struct Move { int x, y; };
@@ -203,8 +203,8 @@ int main() {
 
 ### Results, Errors and Chaining
 ```cpp
-#include <iostream>
 #include <oxide.hpp>
+#include <iostream>
 
 int main() {
     using oxide::Result;
@@ -243,9 +243,9 @@ int main() {
 
 ### Database Example (Vec)
 ```cpp
+#include <oxide.hpp>
 #include <functional>
 #include <iostream>
-#include <oxide.hpp>
 
 struct Insert { std::string key; int value; };
 struct Update { std::string key; int new_value; };
@@ -369,8 +369,8 @@ int main() {
 
 ### Covariant Dispatch Example
 ```cpp
-#include <iostream>
 #include <oxide.hpp>
+#include <iostream>
 
 // Define shape types (no inheritance)
 struct Circle {
