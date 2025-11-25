@@ -35,6 +35,10 @@
 #include <span>
 #include <iterator>
 
+#define OXIDE_VERSION_MAJOR 1
+#define OXIDE_VERSION_MINOR 1
+#define OXIDE_VERSION_PATCH 0
+
 namespace oxide {
     // Optional type
     template<typename T>

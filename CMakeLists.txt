@@ -19,7 +19,7 @@
 # DEALINGS IN THE SOFTWARE.
 
 cmake_minimum_required(VERSION 3.21)
-project(oxide VERSION 1.0.2 LANGUAGES CXX)
+project(oxide VERSION 1.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -36,13 +36,6 @@ target_compile_features(oxide INTERFACE cxx_std_23)
 if(MSVC)
     target_compile_options(oxide INTERFACE /EHsc)
 endif()
-
-target_compile_definitions(oxide INTERFACE
-        OXIDE_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
-        OXIDE_VERSION_MINOR=${PROJECT_VERSION_MINOR}
-        OXIDE_VERSION_PATCH=${PROJECT_VERSION_PATCH}
-        OXIDE_VERSION="${PROJECT_VERSION}"
-)
 
 # Define installation directory for headers
 set(INCLUDE_INSTALL_DIR include)
