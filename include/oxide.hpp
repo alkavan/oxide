@@ -27,7 +27,6 @@
 #include <string>
 #include <utility>
 #include <expected>
-#include <optional>
 #include <vector>
 #include <ranges>
 #include <functional>
@@ -39,20 +38,9 @@
 #define OXIDE_VERSION_MINOR 1
 #define OXIDE_VERSION_PATCH 0
 
+#include "option.hpp"
+
 namespace oxide {
-    // Optional type
-    template<typename T>
-    using Option = std::optional<T>;
-
-    // Some-value type
-    template<typename T>
-    constexpr Option<std::decay_t<T>> Some(T&& value) {
-        return std::make_optional(std::forward<T>(value));
-    }
-
-    // No-value type
-    constexpr std::nullopt_t None = std::nullopt;
-
     // Union type
     template <typename... Variants>
     using Union = std::variant<Variants...>;
@@ -186,7 +174,7 @@ namespace oxide {
          */
         [[nodiscard]] auto pop() -> Option<T> {
             if (this->empty()) {
-                return None;
+                return None<T>();
             }
             T value = std::move(this->back());
             this->pop_back();
@@ -205,7 +193,7 @@ namespace oxide {
             if (index < this->size()) {
                 return Some(std::ref(this->data()[index]));
             }
-            return None;
+            return None<std::reference_wrapper<T>>();
         }
 
         /**
@@ -220,7 +208,7 @@ namespace oxide {
             if (index < this->size()) {
                 return Some(std::cref(this->data()[index]));
             }
-            return None;
+            return None<std::reference_wrapper<const T>>();
         }
 
         /**
@@ -360,7 +348,7 @@ namespace oxide {
             using reference = T&&;
 
             DrainIterator() = delete;
-            DrainIterator(Vec<T>* vec, size_t start, size_t end)
+            DrainIterator(Vec* vec, const size_t start, size_t end)
                 : vec_(vec), start_(start), index_(start), end_(end) {
                 if (start > end || end > vec_->size()) {
                     throw std::out_of_range("drain range out of bounds");
@@ -414,14 +402,14 @@ namespace oxide {
             }
 
         private:
-            Vec<T>* vec_;
+            Vec* vec_;
             size_t start_;
             size_t index_;
             size_t end_;
         };
 
         struct DrainSentinel {
-            Vec<T>* vec_ = nullptr;
+            Vec* vec_ = nullptr;
             size_t end_ = 0;
 
             // TODO: do not make this explicit
@@ -466,13 +454,14 @@ namespace oxide {
      * @return An Option containing the first matching element (moved), or None if not found.
      */
     template <typename R, typename P>
-    [[nodiscard]] auto find(R&& range, P&& pred) -> Option<std::remove_reference_t<decltype(*std::ranges::begin(range))>> {
+    [[nodiscard]] auto find(R&& range, P&& pred) -> Option<std::remove_cv_t<std::remove_reference_t<decltype(*std::ranges::begin(range))>>> {
+        using ValueType = std::remove_cv_t<std::remove_reference_t<decltype(*std::ranges::begin(range))>>;
         for (auto&& item : std::forward<R>(range)) {
             if (pred(item)) {
-                return Some(std::move(item));
+                return Some(ValueType(std::move(item)));
             }
         }
-        return None;
+        return {};
     }
 }
 

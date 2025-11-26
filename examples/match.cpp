@@ -44,18 +44,17 @@ static oxide::Option<std::pair<int, int>> get_coordinates(const Message& msg);
 
 // Match usage example
 int main() {
-    namespace ox = oxide;
-
+    using namespace oxide;
     std::array<Message, 4> msgs = {
         Quit{},
         Move{1, 2},
         Write{"Writing #1 .."},
-        Read{[](){std::cout << "Reading...\n";}}
+        Read{[]{std::cout << "Reading...\n";}}
     };
 
     for (auto& msg : msgs) {
         // Operator match syntax
-        msg >> ox::match {
+        msg >> match {
             [](const Quit&) { std::cout << "Quit\n"; },
             [](Move& m) { m.x++; m.y++; std::cout << "Move: (" << m.x << ", " << m.y << ")\n"; },
             [](Write& w) { std::cout << "Write: " << w.text.append(".") << "\n"; },
@@ -64,11 +63,11 @@ int main() {
     }
 
     // Optional configuration
-    ox::Option<std::string> user_name = ox::Some(std::string("Player1"));
-    ox::Option<int> max_moves = ox::None;  // Not configured
+    Option<std::string> user_name = Some(std::string("Player1"));
+    Option<int> max_moves = None<int>();  // Not configured
 
-    std::cout << "User: " << user_name.value_or("Anonymous") << "\n";
-    std::cout << "Max moves: " << max_moves.value_or(100) << "\n";
+    std::cout << "User: " << user_name.unwrap_or("Anonymous") << "\n";
+    std::cout << "Max moves: " << max_moves.unwrap_or(100) << "\n";
 
     // Alternative way to define messages (type is implicit)
     std::array msgs_functional = {
@@ -76,11 +75,11 @@ int main() {
         move_to(1, 2),
         move_to(2, 3),
         write("Writing #2 ..."),
-        read([](){std::cout << "Reading...\n";})
+        read([]{std::cout << "Reading...\n";})
     };
 
     // Convert to vector for the find function
-    const ox::Vec<Message> msg_vec(msgs_functional.begin(), msgs_functional.end());
+    const Vec<Message> msg_vec(msgs_functional.begin(), msgs_functional.end());
 
     // Is 'Move' message predicate
     auto is_move_predicate = [](const Message& msg){
@@ -88,7 +87,7 @@ int main() {
     };
 
     // Using Option to find a specific message type
-    if (auto found_move = ox::find(msg_vec.iter(), is_move_predicate); found_move.has_value()) {
+    if (const auto found_move = find(msg_vec.iter(), is_move_predicate); found_move.has_value()) {
         std::cout << "Found a Move message!\n";
 
         // Chain operations with Option
@@ -101,9 +100,9 @@ int main() {
 
     // Example with optional settings affecting processing
     auto process_with_context = [&](const Message& msg) {
-        msg >> ox::match {
+        msg >> match {
             [&user_name](const Quit&) {
-                std::cout << user_name.value_or("Someone") << " wants to quit\n";
+                std::cout << user_name.unwrap_or("Someone") << " wants to quit\n";
             },
             [&max_moves](const Move& m) {
                 std::cout << "Processing move: (" << m.x << ", " << m.y << ")";
@@ -129,11 +128,11 @@ int main() {
  *
  * @param msg The `Message` variant to analyze, which may contain a `Move` type.
  * @return An `oxide::Option` containing a `std::pair<int, int>` with the `x` and `y`
- *         coordinates if `msg` contains a `Move` variant; otherwise, returns `oxide::None`.
+ *         coordinates if `msg` contains a `Move` variant; otherwise, returns `oxide::None<std::pair<int, int>>()`.
  */
 oxide::Option<std::pair<int, int>> get_coordinates(const Message& msg) {
     if (const auto* move_msg = std::get_if<Move>(&msg)) {
         return oxide::Some(std::make_pair(move_msg->x, move_msg->y));
     }
-    return oxide::None;
+    return oxide::None<std::pair<int, int>>();
 }
