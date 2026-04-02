@@ -69,6 +69,7 @@ install(TARGETS oxide
 )
 
 install(FILES include/oxide.hpp DESTINATION include)
+install(DIRECTORY include/oxide DESTINATION include)
 
 install(EXPORT oxideTargets
     FILE oxideTargets.cmake

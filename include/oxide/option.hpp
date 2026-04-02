@@ -8,7 +8,6 @@
 #include "output.hpp"
 
 namespace oxide {
-    // Tag type for None (like std::nullopt_t)
     struct none_t {
         explicit none_t() = default;
     };

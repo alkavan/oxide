@@ -38,7 +38,7 @@
 #define OXIDE_VERSION_MINOR 1
 #define OXIDE_VERSION_PATCH 1
 
-#include "option.hpp"
+#include "oxide/option.hpp"
 
 namespace oxide {
     // Union type
