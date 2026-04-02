@@ -16,7 +16,7 @@ hope you enjoy it!
 
 ```
 mkdir build && cd build
-cmake -G Ninja -DCMAKE_INSTALL_PREFIX=../local ..
+cmake -G "Ninja" -DCMAKE_INSTALL_PREFIX="../local" ..
 ninja
 ninja install
 cd ..
