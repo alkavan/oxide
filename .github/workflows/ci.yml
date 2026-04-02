@@ -1,4 +1,4 @@
-name: CMake on multiple platforms
+name: build targets and run examples (package release)
 
 permissions:
   contents: write
@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations.
+      # Set fail-fast to false for ensuring that feedback is delivered for all matrix combinations.
       # Consider changing this to true when your workflow is stable.
       fail-fast: false
 
@@ -24,8 +24,6 @@ jobs:
       # 1. <Windows, Release, latest MSVC compiler toolchain on the default runner image, default generator>
       # 2. <Linux, Release, latest GCC compiler toolchain on the default runner image, default generator>
       # 3. <Linux, Release, latest Clang compiler toolchain on the default runner image, default generator>
-      #
-      # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
         os: [ubuntu-latest, windows-latest]
         build_type: [Release]
@@ -125,10 +123,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Create Release and Upload oxide.hpp
+      - name: Package library release zip
+        id: package
+        shell: bash
+        run: |
+          REF_NAME="${{ github.ref_name }}"
+          version_part="${REF_NAME#v}"
+          version_part="${version_part//./_}"
+          filename="oxide_v${version_part}.zip"
+          BUILD_DIR="$GITHUB_WORKSPACE/build"
+          INSTALL_DIR="$GITHUB_WORKSPACE/install"
+          rm -rf "$BUILD_DIR" "$INSTALL_DIR"
+          mkdir -p "$INSTALL_DIR"
+          cmake -B "$BUILD_DIR" -S . \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"
+          cmake --build "$BUILD_DIR" --config Release
+          cmake --install "$BUILD_DIR"
+          cd "$INSTALL_DIR"
+          zip -r "../$filename" .
+          cd ..
+          echo "zip_path=$GITHUB_WORKSPACE/$filename" >> $GITHUB_OUTPUT
+
+      - name: Create Release and Upload Library Zip
         uses: softprops/action-gh-release@v2
         with:
-          files: include/oxide.hpp
+          files: ${{ steps.package.outputs.zip_path }}
           name: RELEASE ${{ github.ref_name }}
           draft: false
           prerelease: false
