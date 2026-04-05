@@ -25,9 +25,9 @@
 #include <array>
 #include <iostream>
 
-struct Quit {};  // Unit variant
-struct Move { int x, y; };  // Struct variant
-struct Write { std::string text; };  // Tuple-like (but using struct for named field)
+struct Quit {};                                   // Unit variant
+struct Move { int x, y; };                        // Struct variant
+struct Write { std::string text; };               // Tuple-like (but using struct for named field)
 struct Read { std::function<void()> callback; };  // Variant holding a lambda or function
 
 // Your message types (can be one of these)
@@ -81,7 +81,7 @@ int main() {
     // Convert to vector for the find function
     const Vec<Message> msg_vec(msgs_functional.begin(), msgs_functional.end());
 
-    // Is 'Move' message predicate
+    // Is 'Move' message predicate?
     auto is_move_predicate = [](const Message& msg){
         return std::holds_alternative<Move>(msg);
     };
@@ -124,11 +124,11 @@ int main() {
 }
 
 /**
- * Extracts the coordinates from a `Move` message contained within a `Message` variant.
+ * Extracts coordinates from a `Move` message inside a `Message` variant.
  *
- * @param msg The `Message` variant to analyze, which may contain a `Move` type.
- * @return An `oxide::Option` containing a `std::pair<int, int>` with the `x` and `y`
- *         coordinates if `msg` contains a `Move` variant; otherwise, returns `oxide::None<std::pair<int, int>>()`.
+ * @param msg The `Message` to inspect.
+ * @return `oxide::Option` with `(x, y)` pair if the message is a `Move`,
+ *         otherwise `oxide::None<std::pair<int, int>>()`.
  */
 oxide::Option<std::pair<int, int>> get_coordinates(const Message& msg) {
     if (const auto* move_msg = std::get_if<Move>(&msg)) {

@@ -13,9 +13,9 @@ namespace oxide {
     };
     inline constexpr none_t _none{};
 
-    // ---------------------------------------------------------------------------
-    // Primary template for Option<T> (value-owning, like std::optional)
-    // ---------------------------------------------------------------------------
+/// ============================================================================
+/// Primary template for Option<T> (value-owning, like std::optional)
+/// ============================================================================
     template <typename T>
     class Option {
     private:
@@ -29,7 +29,7 @@ namespace oxide {
         using value_type = T;
 
         // Constructors
-        constexpr Option() noexcept : m_has_value(false) {}
+        constexpr Option() noexcept {}
         constexpr explicit Option(none_t) noexcept : Option() {}
         constexpr Option(const Option& other) {
             if (other.m_has_value) {
@@ -130,7 +130,7 @@ namespace oxide {
             }
         }
 
-        // Rust-like helpers (add more as needed)
+        // Rust-like helpers
         T& expect(const char* msg) & { if (!m_has_value) panic(msg); return *ptr(); }
         const T& expect(const char* msg) const& { if (!m_has_value) panic(msg); return *ptr(); }
         template <typename U>
@@ -168,9 +168,9 @@ namespace oxide {
         }
     };
 
-    // ---------------------------------------------------------------------------
-    // Partial specialization for Option<T&> (non-const reference)
-    // ---------------------------------------------------------------------------
+/// ============================================================================
+/// Partial specialization for Option<T&> (non-const reference)
+/// ============================================================================
     template <typename T>
     class Option<T&> {
     private:
@@ -216,9 +216,9 @@ namespace oxide {
         }
     };
 
-    // ---------------------------------------------------------------------------
-    // Partial specialization for Option<const T&> (const reference)
-    // ---------------------------------------------------------------------------
+/// ============================================================================
+/// Partial specialization for Option<const T&> (const reference)
+/// ============================================================================
     template <typename T>
     class Option<const T&> {
     private:
@@ -264,9 +264,9 @@ namespace oxide {
         }
     };
 
-    // ---------------------------------------------------------------------------
-    // Helper free functions for Some / None
-    // ---------------------------------------------------------------------------
+/// ============================================================================
+/// Helper-free functions for Some / None
+/// ============================================================================
     template <typename T>
     constexpr Option<T> Some(T&& value) noexcept
         requires (!std::is_lvalue_reference_v<T>)
