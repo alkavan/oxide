@@ -103,6 +103,7 @@ jobs:
             oxide_covariant_dispatch_example
             oxide_vector_example
             oxide_database_example
+            oxide_container_example
           )
           if [ "${{ runner.os }}" == "Windows" ]; then
             for ex in "${examples[@]}"; do

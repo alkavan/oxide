@@ -33,6 +33,8 @@
 #include <stdexcept>
 #include <span>
 #include <iterator>
+#include <tuple>
+#include <type_traits>
 
 #define OXIDE_VERSION_MAJOR 1
 #define OXIDE_VERSION_MINOR 1
@@ -463,6 +465,133 @@ namespace oxide {
         }
         return {};
     }
+
+    // --- type-list helpers ---
+    template <typename T, typename... Ts>
+    struct type_index;
+
+    template <typename T, typename... Rest>
+    struct type_index<T, T, Rest...> : std::integral_constant<size_t, 0> {};
+
+    template <typename T, typename U, typename... Rest>
+    struct type_index<T, U, Rest...>
+        : std::integral_constant<size_t, 1 + type_index<T, Rest...>::value> {};
+
+    template <typename T, typename... Ts>
+    inline constexpr bool is_one_of_v = (std::is_same_v<T, Ts> || ...);
+
+    template <typename... Ts>
+    struct MultiVec {
+        static_assert(sizeof...(Ts) > 0);
+
+        template <typename T>
+        static constexpr size_t index_of = type_index<std::decay_t<T>, Ts...>::value;
+
+        template <typename T>
+        auto& bucket() noexcept {
+            static_assert(is_one_of_v<std::decay_t<T>, Ts...>);
+            return std::get<index_of<T>>(buckets_);
+        }
+
+        template <typename T>
+        const auto& bucket() const noexcept {
+            static_assert(is_one_of_v<std::decay_t<T>, Ts...>);
+            return std::get<index_of<T>>(buckets_);
+        }
+
+        template <typename T>
+        void push(T value) {
+            bucket<std::decay_t<T>>().push(std::move(value));
+        }
+
+        template <typename T, typename... Args>
+        T& emplace(Args&&... args) {
+            auto& b = bucket<T>();
+            b.push(T(std::forward<Args>(args)...));
+            return b[b.len() - 1];
+        }
+
+        template <typename T>
+        [[nodiscard]] auto len() const noexcept -> size_t {
+            return bucket<T>().len();
+        }
+
+        template <typename T>
+        [[nodiscard]] bool is_empty() const noexcept {
+            return bucket<T>().is_empty();
+        }
+
+        template <typename T>
+        [[nodiscard]] auto get(size_t index) -> Option<std::reference_wrapper<T>> {
+            return bucket<T>().get(index);
+        }
+
+        template <typename T>
+        [[nodiscard]] auto get(size_t index) const -> Option<std::reference_wrapper<const T>> {
+            return bucket<T>().get(index);
+        }
+
+        template <typename T>
+        [[nodiscard]] auto pop() -> Option<T> {
+            return bucket<T>().pop();
+        }
+
+        template <typename T>
+        void clear() noexcept {
+            bucket<T>().clear();
+        }
+
+        void clear_all() noexcept {
+            std::apply([](auto&... b) { (b.clear(), ...); }, buckets_);
+        }
+
+        template <typename T>
+        [[nodiscard]] auto iter() const noexcept {
+            return bucket<T>().iter();
+        }
+
+        template <typename T>
+        [[nodiscard]] auto iter_mut() noexcept {
+            return bucket<T>().iter_mut();
+        }
+
+        [[nodiscard]] auto total_len() const noexcept -> size_t {
+            return std::apply([](const auto&... b) {
+                return (b.len() + ... + size_t{0});
+            }, buckets_);
+        }
+
+        template <typename Matcher>
+        void visit(Matcher&& m) {
+            std::apply([&](auto&... b) {
+                (visit_bucket(b, m), ...);
+            }, buckets_);
+        }
+
+        template <typename Matcher>
+        void visit(Matcher&& m) const {
+            std::apply([&](const auto&... b) {
+                (visit_bucket(b, m), ...);
+            }, buckets_);
+        }
+
+    private:
+        std::tuple<Vec<Ts>...> buckets_;
+
+        template <typename Bucket, typename Matcher>
+        static void visit_bucket(Bucket& b, Matcher& m) {
+            for (auto&& item : b.iter_mut()) {
+                m(item);
+            }
+        }
+
+        template <typename Bucket, typename Matcher>
+        static void visit_bucket(const Bucket& b, Matcher& m) {
+            for (auto&& item : b.iter()) {
+                m(item);
+            }
+        }
+    };
 }
 
 #endif // OXIDE_HPP

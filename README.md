@@ -366,7 +366,6 @@ int main() {
 }
 ```
 
-
 ### Covariant Dispatch Example
 ```cpp
 #include <oxide.hpp>
@@ -417,6 +416,43 @@ int main() {
         [](const Circle& c) { std::cout << "Cloned Circle area: " << c.area() << std::endl; },
         [](const Rectangle& r) { std::cout << "Cloned Rectangle perimeter: " << r.perimeter() << std::endl; }
     };
+
+    return 0;
+}
+```
+### Heterogeneous Container Example (MultiVec)
+```cpp
+#include <oxide.hpp>
+#include <iostream>
+#include <string>
+
+int main() {
+    using namespace oxide;
+
+    MultiVec<int, std::string, double> bag;
+
+    bag.push(1);
+    bag.push(2);
+    bag.push(std::string{"oxide"});
+    bag.push(3.14);
+
+    std::cout << "int length: " << bag.len<int>() << "\n";
+    std::cout << "Total length: " << bag.total_len() << "\n";
+
+    if (const auto popped = bag.pop<int>()) {
+        std::cout << "Popped int: " << *popped << "\n";
+    }
+
+    if (const auto val = bag.get<int>(0)) {
+        std::cout << "Get<int>[0]: " << val->get() << "\n";
+        val->get() = 100;  // mutable access
+    }
+
+    bag.visit(match{
+        [](const int& i) { std::cout << "visit int: " << i << "\n"; },
+        [](const std::string& s) { std::cout << "visit string: " << s << "\n"; },
+        [](const double& d) { std::cout << "visit double: " << d << "\n"; },
+    });
 
     return 0;
 }

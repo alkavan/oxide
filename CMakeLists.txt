@@ -60,6 +60,10 @@ target_link_libraries(oxide_vector_example oxide)
 add_executable(oxide_database_example examples/database.cpp)
 target_link_libraries(oxide_database_example oxide)
 
+# Container example
+add_executable(oxide_container_example examples/container.cpp)
+target_link_libraries(oxide_container_example oxide)
+
 install(TARGETS oxide
         EXPORT oxideTargets
         LIBRARY DESTINATION lib
