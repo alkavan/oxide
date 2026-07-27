@@ -26,7 +26,8 @@
 #include <string>
 
 // MultiVec (heterogeneous container) usage example
-int main() {
+int main()
+{
     using namespace oxide;
 
     MultiVec<int, std::string, double> bag;

@@ -134,4 +134,4 @@ namespace oxide {
     }
 }  // namespace oxide
 
-#endif  // OXIDE_ASSERT_HPP
+#endif  /* OXIDE_ASSERT_HPP */

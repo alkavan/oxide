@@ -25,7 +25,8 @@
 #include <iostream>
 
 // Vector usage example
-int main() {
+int main()
+{
     using namespace oxide;
 
     Vec<int> v{1, 2, 3};

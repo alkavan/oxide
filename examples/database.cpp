@@ -37,7 +37,8 @@ namespace
 // Your message types (can be one of these)
 using Operation = oxide::Union<Insert, Update, Delete, Select, Noop>;
 
-int main() {
+int main()
+{
     oxide::Vec<std::pair<std::string, int>> db;
 
     // Demonstrate push()

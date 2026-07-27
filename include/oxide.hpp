@@ -32,12 +32,13 @@
 
 #define OXIDE_VERSION_MAJOR 1
 #define OXIDE_VERSION_MINOR 2
-#define OXIDE_VERSION_PATCH 0
+#define OXIDE_VERSION_PATCH 1
 
 #include "oxide/option.hpp"
 
-namespace oxide {
-    // Union type
+namespace oxide
+{
+    // Union
     template <typename... Variants>
     using Union = std::variant<Variants...>;
 
@@ -53,13 +54,7 @@ namespace oxide {
         std::visit(std::forward<Matcher>(m), std::forward<Variant>(v));
     }
 
-    // Overloaded helper for macro-based matching
-    template <class... Ts>
-    struct overloaded : Ts... {
-        using Ts::operator()...;
-    };
-
-    // Result type
+    // Result
     template <typename T, typename E = std::string>
     using Result = std::expected<T, E>;
 
@@ -88,4 +83,4 @@ namespace oxide {
     }
 }
 
-#endif // OXIDE_HPP
+#endif /* OXIDE_HPP */

@@ -51,7 +51,7 @@ namespace oxide {
         using value_type = T;
 
         // Constructors
-        constexpr Option() noexcept {}
+        constexpr Option() noexcept = default;
         constexpr explicit Option(none_t) noexcept : Option() {}
         constexpr Option(const Option& other) {
             if (other.m_has_value) {
@@ -182,7 +182,7 @@ namespace oxide {
                               Option<typename std::invoke_result_t<F&&, const T&>::value_type>>
         constexpr auto and_then(F&& f) const& {
             using Rt = std::invoke_result_t<F&&, const T&>;
-            using U = typename Rt::value_type;
+            using U = Rt::value_type;
             if (!has_value()) {
                 return Option<U>(_none);
             }
@@ -222,7 +222,6 @@ namespace oxide {
         T& expect(const char* msg) const { if (!m_ptr) panic(msg); return *m_ptr; }
         T& unwrap_or(T& default_value) const noexcept { return m_ptr ? *m_ptr : default_value; }
 
-        // and_then, like std::optional::and_then (C++23)
         template <typename F>
         requires std::invocable<F&&, T&> &&
                  requires { typename std::invoke_result_t<F&&, T&>::value_type; } &&
@@ -230,7 +229,7 @@ namespace oxide {
                               Option<typename std::invoke_result_t<F&&, T&>::value_type>>
         constexpr auto and_then(F&& f) const& {
             using Rt = std::invoke_result_t<F&&, T&>;
-            using U = typename Rt::value_type;
+            using U = Rt::value_type;
             if (!has_value()) {
                 return Option<U>(_none);
             }
@@ -270,7 +269,6 @@ namespace oxide {
         const T& expect(const char* msg) const { if (!m_ptr) panic(msg); return *m_ptr; }
         const T& unwrap_or(const T& default_value) const noexcept { return m_ptr ? *m_ptr : default_value; }
 
-        // and_then, like std::optional::and_then (C++23)
         template <typename F>
         requires std::invocable<F&&, const T&> &&
                  requires { typename std::invoke_result_t<F&&, const T&>::value_type; } &&
@@ -278,7 +276,7 @@ namespace oxide {
                               Option<typename std::invoke_result_t<F&&, const T&>::value_type>>
         constexpr auto and_then(F&& f) const& {
             using Rt = std::invoke_result_t<F&&, const T&>;
-            using U = typename Rt::value_type;
+            using U = Rt::value_type;
             if (!has_value()) {
                 return Option<U>(_none);
             }
@@ -313,4 +311,5 @@ namespace oxide {
     }
 
 }  // namespace oxide
-#endif // OXIDE_OPTION_HPP
+
+#endif /* OXIDE_OPTION_HPP */

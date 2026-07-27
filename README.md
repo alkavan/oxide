@@ -411,7 +411,7 @@ using ShapeVariant = oxide::Union<Circle, Rectangle>;
 
 // Clone function using pattern matching on the Union
 ShapeVariant clone(const ShapeVariant& shape) {
-    return std::visit(oxide::overloaded{
+    return std::visit(oxide::match{
         [](const Circle& c) -> ShapeVariant { return Circle{c.radius}; },
         [](const Rectangle& r) -> ShapeVariant { return Rectangle{r.width, r.height}; }
     }, shape);

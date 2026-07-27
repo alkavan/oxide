@@ -27,22 +27,22 @@
 #include <sstream>      // std::ostringstream
 #include <string>       // std::string
 #include <string_view>  // std::string_view
-#include <utility>      // std::forward, std::index_sequence
 
-namespace oxide {
-    namespace detail {
+namespace oxide
+{
+    namespace detail
+    {
         // Convert one argument through iostreams (no std::format).
         template <typename T>
-        inline std::string arg_to_string(const T& value) {
+        std::string arg_to_string(const T& value) {
             std::ostringstream out;
             out << value;
             return out.str();
         }
 
-        // Runtime "{}" formatter. Intentionally NOT std::format:
-        // clangd + libstdc++ choke on format_string/make_format_args consteval paths.
+        /* Runtime "{}" formatter. Intentionally NOT `std::format` */
         template <typename... Args>
-        inline std::string format_msg(std::string_view fmt, const Args&... args) {
+        std::string format_msg(const std::string_view fmt, const Args&... args) {
             constexpr std::size_t n = sizeof...(Args);
             std::string values[n > 0 ? n : 1];
             if constexpr (n > 0) {
@@ -81,34 +81,34 @@ namespace oxide {
         }
     }  // namespace detail
 
-    [[noreturn]] inline void panic(std::string_view msg) {
+    [[noreturn]] inline void panic(const std::string_view msg) {
         std::cerr << "panic: " << msg << '\n';
         std::abort();
     }
 
     template <typename... Args>
-    [[noreturn]] inline void panic_fmt(std::string_view fmt, const Args&... args) {
+    [[noreturn]] void panic_fmt(std::string_view fmt, const Args&... args) {
         panic(detail::format_msg(fmt, args...));
     }
 
     [[noreturn]] inline void unreachable(
-        std::string_view msg = "entered unreachable code"
+        const std::string_view msg = "entered unreachable code"
     ) {
         std::cerr << "unreachable: " << msg << '\n';
         std::abort();
     }
 
-    [[noreturn]] inline void todo(std::string_view msg = "not yet implemented") {
+    [[noreturn]] inline void todo(const std::string_view msg = "not yet implemented") {
         std::cerr << "todo: " << msg << '\n';
         std::abort();
     }
 
     [[noreturn]] inline void unimplemented(
-        std::string_view msg = "not implemented"
+        const std::string_view msg = "not implemented"
     ) {
         std::cerr << "unimplemented: " << msg << '\n';
         std::abort();
     }
 }  // namespace oxide
 
-#endif  // OXIDE_OUTPUT_HPP
+#endif /* OXIDE_OUTPUT_HPP */

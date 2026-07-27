@@ -39,7 +39,7 @@ using Message = oxide::Union<Quit, Move, Write, Read>;
 
 // Non-template factory functions
 static constexpr Message quit() { return Message{Quit{}}; }
-static constexpr Message move_to(const int x, const int y) { return Message{Move{x, y}}; }
+static constexpr Message move_to(const int x, const int y) { return Message{Move{.x = x, .y = y}}; }
 static Message write(std::string text) { return Message{Write{std::move(text)}}; }
 static Message read(std::function<void()> callback) { return Message{Read{std::move(callback)}}; }
 
@@ -47,7 +47,8 @@ static Message read(std::function<void()> callback) { return Message{Read{std::m
 static oxide::Option<std::pair<int, int>> get_coordinates(const Message& msg);
 
 // Match usage example
-int main() {
+int main()
+{
     using namespace oxide;
     std::array<Message, 4> msgs = {
         Quit{},

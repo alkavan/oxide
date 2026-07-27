@@ -35,8 +35,8 @@
 
 #include "option.hpp"
 
-namespace oxide {
-
+namespace oxide
+{
     // --- type-list helpers ---
     template <typename T, typename... Ts>
     struct type_index;
@@ -81,8 +81,8 @@ namespace oxide {
         }
 
         /**
-         * @brief Shortens the vector to the specified length, removing elements from the end.
-         *        If len >= current length, does nothing.
+         * @brief Shortens the vector to the specified length, removing elements
+         *        from the end. If len >= current length, does nothing.
          *
          * @param len The new length of the vector.
          */
@@ -114,6 +114,7 @@ namespace oxide {
          * @brief Accesses the element at the specified index.
          *
          * @param index The index of the element to access (must be within bounds).
+         *
          * @return A reference to the element at the given index.
          * @throws std::out_of_range if the index is out of bounds.
          */
@@ -129,6 +130,7 @@ namespace oxide {
          * @brief Accesses the element at the specified index (const version).
          *
          * @param index The index of the element to access (must be within bounds).
+         *
          * @return A const reference to the element at the given index.
          * @throws std::out_of_range if the index is out of bounds.
          */
@@ -152,8 +154,8 @@ namespace oxide {
         /**
          * @brief Removes and returns the last element from the vector if it exists.
          *
-         * @return An Option containing the moved last element if the vector is not empty,
-         *         otherwise None.
+         * @return An Option containing the moved last element if the vector is
+         *         not empty, otherwise None.
          */
         [[nodiscard]] auto pop() -> Option<T> {
             if (this->empty()) {
@@ -165,12 +167,13 @@ namespace oxide {
         }
 
         /**
-         * @brief Retrieves a reference to the element at the specified index if it exists.
+         * @brief Retrieves a reference to the element at the specified index if
+         *        it exists.
          *
          * @param index The index of the element to retrieve.
-         * @return An Option containing a reference to the element at the given index
-         *         if the index is within bounds (less than the size of the vector),
-         *         otherwise None.
+         * @return An Option containing a reference to the element at the given
+         *         index if the index is within bounds (less than the size of
+         *         the vector), otherwise None.
          */
         [[nodiscard]] auto get(size_t index) -> Option<std::reference_wrapper<T>> {
             if (index < this->size()) {
@@ -180,12 +183,13 @@ namespace oxide {
         }
 
         /**
-         * @brief Retrieves a const reference to the element at the specified index if it exists.
+         * @brief Retrieves a const reference to the element at the specified
+         *        index if it exists.
          *
          * @param index The index of the element to retrieve.
-         * @return An Option containing a const reference to the element at the given index
-         *         if the index is within bounds (less than the size of the vector),
-         *         otherwise None.
+         * @return An Option containing a const reference to the element at the
+         *         given index if the index is within bounds (less than the size
+         *         of the vector), otherwise None.
          */
         [[nodiscard]] auto get(size_t index) const -> Option<std::reference_wrapper<const T>> {
             if (index < this->size()) {
@@ -220,7 +224,8 @@ namespace oxide {
 
         /**
          * @brief Removes the element at the specified position and returns it.
-         *        It shifts subsequent elements down and throws if the index is out of bounds.
+         *        It shifts subsequent elements down and throws if the index is
+         *        out of bounds.
          *
          * @param index The index of the element to remove (0 <= index < len()).
          * @return The removed element (moved out).
@@ -245,7 +250,8 @@ namespace oxide {
         }
 
         /**
-         * @brief Returns the total number of elements the vector can hold without reallocating.
+         * @brief Returns the total number of elements the vector can hold
+         *        without reallocating.
          *
          * @return The capacity of the vector as a size_t.
          */
@@ -298,8 +304,9 @@ namespace oxide {
         /**
          * @brief A sentinel structure used to indicate the end of a drain operation.
          *
-         * DrainSentinel serves as a marker or terminator in contexts where draining
-         * resources or data streams is required, ensuring safe and controlled termination.
+         * DrainSentinel serves as a marker or terminator in contexts where
+         * draining resources or data streams is required, ensuring safe and
+         * controlled termination.
          */
         struct DrainSentinel;
 
@@ -320,7 +327,8 @@ namespace oxide {
         }
 
         /**
-         * @brief An iterator that drains elements from a container by transferring ownership.
+         * @brief An iterator that drains elements from a container by
+         *        transferring ownership.
          */
         class DrainIterator {
         public:
@@ -401,11 +409,12 @@ namespace oxide {
         };
 
         /**
-         * @brief Drains elements from the specified range,
-         *        returning a subrange view for iteration and removal.
+         * @brief Drains elements from the specified range, returning a subrange
+         *        view for iteration and removal.
          *
          * @param range The range specifying the elements to drain.
-         * @return A subrange with DrainIterator and DrainSentinel representing the drained elements.
+         * @return A subrange with DrainIterator and DrainSentinel representing
+         *         the drained elements.
          */
         [[nodiscard]] auto drain(std::ranges::range auto range) -> std::ranges::subrange<DrainIterator, DrainSentinel> {
             auto [start, end] = [&]() -> std::pair<size_t, size_t> {
@@ -534,7 +543,6 @@ namespace oxide {
             }
         }
     };
-
 } // namespace oxide
 
-#endif // OXIDE_CONTAINER_HPP
+#endif /* OXIDE_CONTAINER_HPP */

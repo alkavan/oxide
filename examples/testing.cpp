@@ -208,7 +208,7 @@ bool run_child_reexec(const std::string_view label) {
 }
 #endif  // _WIN32
 
-bool run_expecting_abort(const std::string_view label, CaseFn body) {
+bool run_expecting_abort(const std::string_view label, const CaseFn body) {
     std::cout << "[expect abort] " << label << " ... " << std::flush;
 
 #if defined(_WIN32)
@@ -244,8 +244,7 @@ bool run_expecting_abort(const std::string_view label, CaseFn body) {
     }
 
     if (WIFEXITED(status)) {
-        const int code = WEXITSTATUS(status);
-        if (code == kDidNotAbortExitCode) {
+        if (const int code = WEXITSTATUS(status); code == kDidNotAbortExitCode) {
             std::cout << "FAILED (code ran but did not abort)\n";
         } else {
             std::cout << "FAILED (child exited with code " << code << ")\n";
@@ -302,7 +301,8 @@ void demo_failing_checks() {
 
 }  // namespace
 
-int main(int argc, char** argv) {
+int main(const int argc, char** argv)
+{
 #if defined(_WIN32)
     enable_utf8_console();
 #endif

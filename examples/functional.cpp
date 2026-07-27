@@ -25,7 +25,8 @@
 #include <iostream>
 
 // Functional usage example
-int main() {
+int main()
+{
     using namespace oxide;
 
 // =============================================================================
@@ -137,10 +138,10 @@ int main() {
     std::cout << "after reset(): " << opt_struct.has_value() << "\n";
 
     // assignments: copy, move, value(U&&), none_t
-    Option<int> opt_copy(opt_some);  // copy ctor
+    Option opt_copy(opt_some);  // copy ctor
     std::cout << "copy ctor value: " << opt_copy.value() << "\n";
 
-    Option<int> opt_move_ctor(std::move(opt_some));  // move ctor
+    Option opt_move_ctor(std::move(opt_some));  // move ctor
     std::cout << "move ctor has_value: " << opt_move_ctor.has_value()
         << ", source: " << opt_some.has_value() << "\n";
 
