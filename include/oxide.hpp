@@ -32,7 +32,7 @@
 
 #define OXIDE_VERSION_MAJOR 1
 #define OXIDE_VERSION_MINOR 2
-#define OXIDE_VERSION_PATCH 0
+#define OXIDE_VERSION_PATCH 1
 
 #include "oxide/option.hpp"
 
