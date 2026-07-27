@@ -34,14 +34,18 @@ refer to the `examples.cpp` file or explorer the fully working examples below.
 
 ```cpp
 #include <oxide.hpp>
+#include <oxide/container.hpp>
 #include <functional>
 #include <array>
 #include <iostream>
 
-struct Quit {};
-struct Move { int x, y; };
-struct Write { std::string text; };
-struct Read { std::function<void()> callback; };
+namespace
+{
+    struct Quit {};
+    struct Move { int x, y; };
+    struct Write { std::string text; };
+    struct Read { std::function<void()> callback; };
+}
 
 using Message = oxide::Union<Quit, Move, Write, Read>;
 
@@ -72,23 +76,27 @@ int main() {
 ### Functional Example
 ```cpp
 #include <oxide.hpp>
+#include <oxide/container.hpp>
 #include <functional>
 #include <array>
 #include <iostream>
 
-struct Quit {};
-struct Move { int x, y; };
-struct Write { std::string text; };
-struct Read { std::function<void()> callback; };
+namespace
+{
+    struct Quit {};
+    struct Move { int x, y; };
+    struct Write { std::string text; };
+    struct Read { std::function<void()> callback; };
+}
 
 // Your message types (can be one of these)
 using Message = oxide::Union<Quit, Move, Write, Read>;
 
 // Non-template factory functions
-constexpr Message quit() { return Message{Quit{}}; }
-constexpr Message move_to(const int x, const int y) { return Message{Move{x, y}}; }
-Message write(std::string text) { return Message{Write{std::move(text)}}; }
-Message read(std::function<void()> callback) { return Message{Read{std::move(callback)}}; }
+static constexpr Message quit() { return Message{Quit{}}; }
+static constexpr Message move_to(const int x, const int y) { return Message{Move{x, y}}; }
+static Message write(std::string text) { return Message{Write{std::move(text)}}; }
+static Message read(std::function<void()> callback) { return Message{Read{std::move(callback)}}; }
 
 oxide::Option<std::pair<int, int>> get_coordinates(const Message& msg);
 
@@ -137,7 +145,6 @@ oxide::Option<std::pair<int, int>> get_coordinates(const Message& msg) {
 ```cpp
 #include <oxide.hpp>
 #include <oxide/container.hpp>
-
 #include <functional>
 #include <array>
 #include <iostream>
@@ -154,10 +161,10 @@ namespace
 using Message = oxide::Union<Quit, Move, Write, Read>;
 
 // Non-template factory functions
-constexpr Message quit() { return Message{Quit{}}; }
-constexpr Message move_to(const int x, const int y) { return Message{Move{x, y}}; }
-Message write(std::string text) { return Message{Write{std::move(text)}}; }
-Message read(std::function<void()> callback) { return Message{Read{std::move(callback)}}; }
+static constexpr Message quit() { return Message{Quit{}}; }
+static constexpr Message move_to(const int x, const int y) { return Message{Move{x, y}}; }
+static Message write(std::string text) { return Message{Write{std::move(text)}}; }
+static Message read(std::function<void()> callback) { return Message{Read{std::move(callback)}}; }
 
 int main() {
     namespace ox = oxide;
@@ -250,7 +257,6 @@ int main() {
 ```cpp
 #include <oxide.hpp>
 #include <oxide/container.hpp>
-
 #include <functional>
 #include <iostream>
 
@@ -436,7 +442,6 @@ int main() {
 ```cpp
 #include <oxide.hpp>
 #include <oxide/container.hpp>
-
 #include <iostream>
 #include <string>
 
