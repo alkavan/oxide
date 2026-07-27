@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2025 Igal Alkon and ALKONTEK
+ *  Copyright (C) 2025-2026 Igal Alkon and ALKONTEK
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a
  *  copy of this software and associated documentation files (the "Software"),
@@ -20,24 +20,28 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 #include <oxide.hpp>
+#include <oxide/container.hpp>
 
 #include <functional>
 #include <array>
 #include <iostream>
 
-struct Quit {};                                   // Unit variant
-struct Move { int x, y; };                        // Struct variant
-struct Write { std::string text; };               // Tuple-like (but using struct for named field)
-struct Read { std::function<void()> callback; };  // Variant holding a lambda or function
+namespace
+{
+    struct Quit {};                                   // Unit variant
+    struct Move { int x, y; };                        // Struct variant
+    struct Write { std::string text; };               // Tuple-like (but using struct for named field)
+    struct Read { std::function<void()> callback; };  // Variant holding a lambda or function
+}
 
 // Your message types (can be one of these)
 using Message = oxide::Union<Quit, Move, Write, Read>;
 
 // Non-template factory functions
-constexpr Message quit() { return Message{Quit{}}; }
-constexpr Message move_to(const int x, const int y) { return Message{Move{x, y}}; }
-Message write(std::string text) { return Message{Write{std::move(text)}}; }
-Message read(std::function<void()> callback) { return Message{Read{std::move(callback)}}; }
+static constexpr Message quit() { return Message{Quit{}}; }
+static constexpr Message move_to(const int x, const int y) { return Message{Move{x, y}}; }
+static Message write(std::string text) { return Message{Write{std::move(text)}}; }
+static Message read(std::function<void()> callback) { return Message{Read{std::move(callback)}}; }
 
 // Example helper functions
 static oxide::Option<std::pair<int, int>> get_coordinates(const Message& msg);
@@ -47,7 +51,7 @@ int main() {
     using namespace oxide;
     std::array<Message, 4> msgs = {
         Quit{},
-        Move{1, 2},
+        Move{.x = 1, .y = 2},
         Write{"Writing #1 .."},
         Read{[]{std::cout << "Reading...\n";}}
     };

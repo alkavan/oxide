@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2025 Igal Alkon and ALKONTEK
+ *  Copyright (C) 2025-2026 Igal Alkon and ALKONTEK
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a
  *  copy of this software and associated documentation files (the "Software"),
@@ -129,8 +129,8 @@ int main() {
     };
     Option<TestStruct> opt_struct = Some(TestStruct{21});
     std::cout << "operator*()->x: " << opt_struct->x << "\n";
-    std::cout << "operator*().y(): " << opt_struct->y() << "\n";
-    std::cout << "operator*().x: " << (*opt_struct).x << "\n";
+    std::cout << "operator*()->y(): " << opt_struct->y() << "\n";
+    std::cout << "operator*()->x: " << opt_struct->x << "\n";
 
     // reset()
     opt_struct.reset();

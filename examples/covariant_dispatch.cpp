@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2025 Igal Alkon and ALKONTEK
+ *  Copyright (C) 2025-2026 Igal Alkon and ALKONTEK
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a
  *  copy of this software and associated documentation files (the "Software"),
@@ -23,28 +23,30 @@
 
 #include <iostream>
 
-// Define shape types (no inheritance)
-struct Circle {
-    double radius = 1.0;
+namespace
+{ // Define shape types (no inheritance)
+    struct Circle {
+        double radius = 1.0;
 
-    [[nodiscard]] double area() const {
-        return 3.14159 * radius * radius;
-    }
-};
+        [[nodiscard]] double area() const {
+            return 3.14159 * radius * radius;
+        }
+    };
 
-struct Rectangle {
-    double width = 7.0, height = 14.0;
+    struct Rectangle {
+        double width = 7.0, height = 14.0;
 
-    [[nodiscard]] double perimeter() const {
-        return 2 * (width + height);
-    }
-};
+        [[nodiscard]] double perimeter() const {
+            return 2 * (width + height);
+        }
+    };
+}
 
 // Create a discriminated union for shapes
 using ShapeVariant = oxide::Union<Circle, Rectangle>;
 
 // Clone function using pattern matching on the Union
-ShapeVariant clone(const ShapeVariant& shape) {
+static ShapeVariant clone(const ShapeVariant& shape) {
     return std::visit(oxide::overloaded{
         [](const Circle& c) -> ShapeVariant { return Circle{c.radius}; },
         [](const Rectangle& r) -> ShapeVariant { return Rectangle{r.width, r.height}; }

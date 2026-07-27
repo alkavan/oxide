@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2025 Igal Alkon and ALKONTEK
+ *  Copyright (C) 2025-2026 Igal Alkon and ALKONTEK
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a
  *  copy of this software and associated documentation files (the "Software"),
@@ -20,16 +20,19 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 #include <oxide.hpp>
+#include <oxide/container.hpp>
 
 #include <functional>
 #include <iostream>
 
-
-struct Insert { std::string key; int value; };
-struct Update { std::string key; int new_value; };
-struct Delete { std::string key; };
-struct Select { std::string key; std::function<void(int)> callback; };
-struct Noop {};
+namespace
+{
+    struct Insert { std::string key; int value; };
+    struct Update { std::string key; int new_value; };
+    struct Delete { std::string key; };
+    struct Select { std::string key; std::function<void(int)> callback; };
+    struct Noop {};
+}
 
 // Your message types (can be one of these)
 using Operation = oxide::Union<Insert, Update, Delete, Select, Noop>;
@@ -71,15 +74,15 @@ int main() {
     std::cout << "After shrink_to_fit, capacity: " << db.capacity() << "\n";
 
     // Message examples with pattern matching for database operations
-    const Operation op1 = Insert{"user100", 1000};
-    const Operation op2 = Update{"user50", 500};
-    const Operation op3 = Delete{"user25"};
+    const Operation op1 = Insert{.key = "user100", .value = 1000};
+    const Operation op2 = Update{.key = "user50", .new_value = 500};
+    const Operation op3 = Delete{.key = "user25"};
     const Operation op4 = Select{
-        "user75",
-        [](const int value){
-        std::cout << "Queried value: " << value << "\n";
-    }};
-    const Operation op5 = Noop{};
+        .key = "user75",
+        .callback = [](const int value){
+            std::cout << "Queried value: " << value << "\n";
+        }};
+    constexpr Operation op5 = Noop{};
 
     // Demonstrate handler using oxide::match{}
     auto db_handler = [&](const Operation& msg) {

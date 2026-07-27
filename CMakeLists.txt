@@ -1,4 +1,4 @@
-# Copyright (C) 2025 Igal Alkon and ALKONTEK
+# Copyright (C) 2025-2026 Igal Alkon and ALKONTEK
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -19,7 +19,7 @@
 # DEALINGS IN THE SOFTWARE.
 
 cmake_minimum_required(VERSION 3.21)
-project(oxide VERSION 1.1.2 LANGUAGES CXX)
+project(oxide VERSION 1.2.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -63,6 +63,10 @@ target_link_libraries(oxide_database_example oxide)
 # Container example
 add_executable(oxide_container_example examples/container.cpp)
 target_link_libraries(oxide_container_example oxide)
+
+# Testing example
+add_executable(oxide_testing_example examples/testing.cpp)
+target_link_libraries(oxide_testing_example oxide)
 
 install(TARGETS oxide
         EXPORT oxideTargets

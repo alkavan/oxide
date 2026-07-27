@@ -136,14 +136,19 @@ oxide::Option<std::pair<int, int>> get_coordinates(const Message& msg) {
 
 ```cpp
 #include <oxide.hpp>
+#include <oxide/container.hpp>
+
 #include <functional>
 #include <array>
 #include <iostream>
 
-struct Quit {};
-struct Move { int x, y; };
-struct Write { std::string text; };
-struct Read { std::function<void()> callback; };
+namespace
+{
+    struct Quit {};                                   // Unit variant
+    struct Move { int x, y; };                        // Struct variant
+    struct Write { std::string text; };               // Tuple-like (but using struct for named field)
+    struct Read { std::function<void()> callback; };  // Variant holding a lambda or function
+}
 
 // Your message types (can be one of these)
 using Message = oxide::Union<Quit, Move, Write, Read>;
@@ -244,14 +249,19 @@ int main() {
 ### Database Example (Vec)
 ```cpp
 #include <oxide.hpp>
+#include <oxide/container.hpp>
+
 #include <functional>
 #include <iostream>
 
-struct Insert { std::string key; int value; };
-struct Update { std::string key; int new_value; };
-struct Delete { std::string key; };
-struct Select { std::string key; std::function<void(int)> callback; };
-struct Noop {};
+namespace
+{
+    struct Insert { std::string key; int value; };
+    struct Update { std::string key; int new_value; };
+    struct Delete { std::string key; };
+    struct Select { std::string key; std::function<void(int)> callback; };
+    struct Noop {};
+}
 
 // Your message types (can be one of these)
 using Operation = oxide::Union<Insert, Update, Delete, Select, Noop>;
@@ -371,22 +381,24 @@ int main() {
 #include <oxide.hpp>
 #include <iostream>
 
-// Define shape types (no inheritance)
-struct Circle {
-    double radius = 1.0;
+namespace
+{ // Define shape types (no inheritance)
+    struct Circle {
+        double radius = 1.0;
 
-    [[nodiscard]] double area() const {
-        return 3.14159 * radius * radius;
-    }
-};
+        [[nodiscard]] double area() const {
+            return 3.14159 * radius * radius;
+        }
+    };
+    
+    struct Rectangle {
+        double width = 7.0, height = 14.0;
 
-struct Rectangle {
-    double width = 7.0, height = 14.0;
-
-    [[nodiscard]] double perimeter() const {
-        return 2 * (width + height);
-    }
-};
+        [[nodiscard]] double perimeter() const {
+            return 2 * (width + height);
+        }
+    };
+}
 
 // Create a discriminated union for shapes
 using ShapeVariant = oxide::Union<Circle, Rectangle>;
@@ -423,6 +435,8 @@ int main() {
 ### Heterogeneous Container Example (MultiVec)
 ```cpp
 #include <oxide.hpp>
+#include <oxide/container.hpp>
+
 #include <iostream>
 #include <string>
 
@@ -453,6 +467,36 @@ int main() {
         [](const std::string& s) { std::cout << "visit string: " << s << "\n"; },
         [](const double& d) { std::cout << "visit double: " << d << "\n"; },
     });
+
+    return 0;
+}
+```
+
+### Testing and Asserts Example
+```cpp
+#include <oxide/assert.hpp>
+#include <iostream>
+
+int main() {
+    using namespace oxide;
+
+    constexpr int size = 4;
+    constexpr int index = 2;
+    const int* ptr = &size;
+
+    // Passing checks (run in-process)
+    check(index < size);
+    check(ptr != nullptr, "ptr must not be null");
+    assert_that(size > 0);
+    assert_that(index >= 0, "index must be non-negative");
+
+    std::cout << "check/assert_that: ok\n";
+
+    // Failing checks call panic and end in std::abort().
+    // They cannot be caught with try/catch.
+    
+    // check(false, "manual check failure");
+    // assert_that(false, "manual assertion failure");
 
     return 0;
 }
